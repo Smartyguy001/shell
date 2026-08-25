@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Caelestia.Config
 
 Singleton {
     id: root
@@ -36,7 +37,7 @@ Singleton {
     Timer {
         running: true
         repeat: true
-        interval: 15000
+        interval: GlobalConfig.general.battery.chargeThresholdPollInterval
         onTriggered: {
             if (root.path)
                 file.reload();
