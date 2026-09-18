@@ -1,6 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtMultimedia
+import Quickshell
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
@@ -12,25 +14,47 @@ import qs.utils
 Item {
     id: root
 
-    property string source: Wallpapers.current
-    property CachingImage current
-    property bool completed
+    required property ShellScreen screen
 
-    onSourceChanged: {
-        if (!source)
+    property string source: Wallpapers.current
+    property Item current
+    property bool completed
+    readonly property bool isPaused: {
+        const fullscreen = Hypr.monitorFor(screen)?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
+        return (Config.background.video.pauseOnFullscreen && fullscreen) || (Config.background.video.pauseInGameMode && GameMode.enabled);
+    }
+
+    function switchSource(): void {
+        if (!source) {
             current = null;
-        else
-            current = imgComp.createObject(this, {
-                path: source
-            });
+            return;
+        }
+
+        let component = imgComp;
+        let path = source;
+        if (Images.isVideoFile(source)) {
+            if (isPaused)
+                path = Wallpapers.displayPathFor(source);
+            else
+                component = videoComp;
+        } else if (Images.isGifFile(source)) {
+            component = gifComp;
+        }
+        current = component.createObject(root, {
+            wallpaperPath: path
+        });
+    }
+
+    onSourceChanged: switchSource()
+    onIsPausedChanged: {
+        if (Images.isVideoFile(source))
+            switchSource();
     }
 
     Component.onCompleted: {
         if (source)
             Qt.callLater(() => {
-                current = imgComp.createObject(this, {
-                    path: source
-                });
+                switchSource();
                 completed = true;
             });
     }
@@ -75,8 +99,8 @@ Item {
                             id: dialog
 
                             title: Tr.tr("Select a wallpaper")
-                            filterLabel: Tr.tr("Image files")
-                            filters: Images.validImageExtensions
+                            filterLabel: Tr.tr("Image and video files")
+                            filters: [...Images.validImageExtensions, ...Images.validVideoExtensions]
                             onAccepted: path => Wallpapers.setWallpaper(path)
                         }
 
@@ -107,13 +131,18 @@ Item {
         CachingImage {
             id: img
 
-            anchors.fill: parent
+            property string wallpaperPath
+            property bool ready
 
+            anchors.fill: parent
+            path: Wallpapers.displayPathFor(img.wallpaperPath)
             opacity: 0
 
             onStatusChanged: {
-                if (status === Image.Ready)
+                if (status === Image.Ready) {
+                    ready = true;
                     anim.start();
+                }
             }
 
             Anim on opacity {
@@ -126,9 +155,108 @@ Item {
             }
 
             Timer {
-                running: root.current !== img && root.current?.status === Image.Ready
+                running: root.current !== img && img.ready
                 interval: anim.duration
                 onTriggered: img.destroy()
+            }
+        }
+    }
+
+    Component {
+        id: gifComp
+
+        AnimatedImage {
+            id: gif
+
+            property string wallpaperPath
+            property bool ready
+
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectCrop
+            source: `file://${wallpaperPath}`
+            playing: true
+            opacity: 0
+
+            onStatusChanged: {
+                if (status === AnimatedImage.Ready) {
+                    ready = true;
+                    anim.start();
+                }
+            }
+
+            Anim on opacity {
+                id: anim
+
+                type: Anim.SlowEffects
+                running: false
+                from: 0
+                to: 1
+            }
+
+            Timer {
+                running: root.current !== gif && gif.ready
+                interval: anim.duration
+                onTriggered: gif.destroy()
+            }
+        }
+    }
+
+    Component {
+        id: videoComp
+
+        Item {
+            id: videoContainer
+
+            property string wallpaperPath
+            property bool ready
+
+            anchors.fill: root
+            opacity: 0
+
+            MediaPlayer {
+                id: player
+
+                source: videoContainer.wallpaperPath ? `file://${videoContainer.wallpaperPath}` : ""
+                videoOutput: output
+                loops: MediaPlayer.Infinite
+                autoPlay: true
+
+                audioOutput: AudioOutput {
+                    muted: Config.background.video.muted
+                }
+
+                onPlaybackStateChanged: function (playbackState) {
+                    if (playbackState === MediaPlayer.PlayingState) {
+                        videoContainer.ready = true;
+                        videoAnim.start();
+                    }
+                }
+
+                onErrorOccurred: function (error, errorString) {
+                    console.warn("Video wallpaper error:", errorString);
+                }
+            }
+
+            VideoOutput {
+                id: output
+
+                anchors.fill: videoContainer
+                fillMode: VideoOutput.PreserveAspectCrop
+            }
+
+            Anim on opacity {
+                id: videoAnim
+
+                type: Anim.SlowEffects
+                running: false
+                from: 0
+                to: 1
+            }
+
+            Timer {
+                running: root.current !== videoContainer && videoContainer.ready
+                interval: videoAnim.duration
+                onTriggered: videoContainer.destroy()
             }
         }
     }
