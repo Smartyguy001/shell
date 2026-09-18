@@ -29,6 +29,8 @@
   pkg-config,
   caelestia-cli,
   m3shapes,
+  ffmpeg,
+  ffmpegthumbnailer,
   debug ? false,
   withCli ? false,
   extraRuntimeDeps ? [],
