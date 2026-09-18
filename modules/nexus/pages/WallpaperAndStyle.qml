@@ -200,6 +200,19 @@ PageBase {
         }
 
         ToggleRow {
+            text: Tr.tr("Wallpaper parallax")
+            checked: Config.background.parallax.enabled
+            onToggled: GlobalConfig.background.parallax.enabled = checked
+        }
+
+        SliderRow {
+            label: Tr.tr("Parallax amount")
+            valueLabel: `${Math.round(Config.background.parallax.amount * 100)}%`
+            value: Config.background.parallax.amount
+            onMoved: value => GlobalConfig.background.parallax.amount = value
+        }
+
+        ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 
             text: Tr.tr("Transparency")
