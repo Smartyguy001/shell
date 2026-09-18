@@ -155,7 +155,7 @@ Item {
             }
 
             Timer {
-                running: root.current !== img && img.ready
+                running: root.current !== img && (root.current?.ready ?? true) // qmllint disable missing-property
                 interval: anim.duration
                 onTriggered: img.destroy()
             }
@@ -194,7 +194,7 @@ Item {
             }
 
             Timer {
-                running: root.current !== gif && gif.ready
+                running: root.current !== gif && (root.current?.ready ?? true) // qmllint disable missing-property
                 interval: anim.duration
                 onTriggered: gif.destroy()
             }
@@ -254,7 +254,7 @@ Item {
             }
 
             Timer {
-                running: root.current !== videoContainer && videoContainer.ready
+                running: root.current !== videoContainer && (root.current?.ready ?? true) // qmllint disable missing-property
                 interval: videoAnim.duration
                 onTriggered: videoContainer.destroy()
             }
