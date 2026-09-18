@@ -53,6 +53,9 @@ start_branch="$(git symbolic-ref --quiet --short HEAD || true)"
 [[ -n "$start_branch" ]] || die "must start on a branch"
 [[ -f patches.list ]] || die "patches.list not found"
 
+git fetch --force "$upstream" main:refs/upstream/main
+git fetch --prune "$remote"
+
 mapfile -t patch_lines < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' patches.list)
 declare -a branches=()
 declare -a prs=()
@@ -75,8 +78,6 @@ for line in "${patch_lines[@]}"; do
     dependencies+=("$dependency")
 done
 
-git fetch --force "$upstream" main:refs/upstream/main
-git fetch "$remote"
 git switch main
 
 local_commits="$(git rev-list refs/upstream/main..main)"
@@ -108,6 +109,12 @@ if (( ! skip_rebase )); then
             git show-ref --verify --quiet "refs/remotes/$remote/$branch" \
                 || die "branch $branch exists neither locally nor on $remote"
             git branch --track "$branch" "$remote/$branch"
+        elif git show-ref --verify --quiet "refs/remotes/$remote/$branch"; then
+            if git merge-base --is-ancestor "$branch" "$remote/$branch"; then
+                git branch -f "$branch" "$remote/$branch"
+            elif ! git merge-base --is-ancestor "$remote/$branch" "$branch"; then
+                die "$branch has diverged from $remote/$branch — reconcile (git rebase $remote/$branch $branch, or git push --force-with-lease $remote $branch after a --no-push run) and rerun"
+            fi
         fi
         git rebase "$base" "$branch" || {
             echo "CONFLICT in $branch — resolve, \`git rebase --continue\`, rerun with --skip-rebase" >&2
