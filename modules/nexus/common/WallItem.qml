@@ -39,6 +39,35 @@ Item {
             radius: Tokens.rounding.largeIncreased
             color: Colours.tPalette.m3surfaceContainer
 
+            Loader {
+                anchors.centerIn: parent
+
+                opacity: img.status === Image.Ready || img.status === Image.Error ? 0 : 1
+                active: opacity > 0
+
+                sourceComponent: StyledRect {
+                    implicitWidth: loadingIndicator.implicitSize + Tokens.padding.large * 2
+                    implicitHeight: loadingIndicator.implicitSize + Tokens.padding.large * 2
+
+                    color: Colours.palette.m3primaryContainer
+                    radius: Tokens.rounding.full
+
+                    LoadingIndicator {
+                        id: loadingIndicator
+
+                        anchors.centerIn: parent
+                        containsIcon: true
+                        implicitSize: Math.min(imgWrapper.width, imgWrapper.height) * 0.3
+                    }
+                }
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
+            }
+
             MaterialIcon {
                 anchors.centerIn: parent
                 text: root.isVideo ? "videocam" : "image"
