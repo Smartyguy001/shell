@@ -5,11 +5,15 @@ upstream="https://github.com/caelestia-dots/shell"
 remote="origin"
 no_push=0
 skip_rebase=0
+install=0
 
 usage() {
     cat <<'EOF'
-Usage: scripts/sync-upstream.sh [--no-push] [--skip-rebase]
+Usage: scripts/sync-upstream.sh [--no-push] [--skip-rebase] [--install]
        [--upstream URL] [--remote NAME]
+
+  --install   after rebuilding live, build it and `sudo cmake --install`
+              (extra CMake flags via CMAKE_ARGS, e.g. CMAKE_ARGS="-DINSTALL_QSCONFDIR=...")
 EOF
 }
 
@@ -20,6 +24,9 @@ while (($#)); do
             ;;
         --skip-rebase)
             skip_rebase=1
+            ;;
+        --install)
+            install=1
             ;;
         --upstream)
             (($# >= 2)) || { usage >&2; exit 2; }
@@ -168,6 +175,13 @@ if command -v gh >/dev/null 2>&1; then
         fi
         printf '%-34s %-5s %-10s %s\n' "$branch" "$pr" "$state" "$status"
     done
+fi
+
+if (( install )); then
+    # shellcheck disable=SC2086
+    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ ${CMAKE_ARGS:-}
+    cmake --build build
+    sudo cmake --install build
 fi
 
 git switch "$start_branch"
