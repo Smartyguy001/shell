@@ -61,7 +61,7 @@ Searcher {
         setVideoProc.command = [
             "sh",
             "-c",
-            'f="$1"; v="$2"; p="$3"; t="${f%/*}"; mkdir -p "$t"; if [ ! -f "$f" ]; then if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$v" -o "$f" -s 512 -q 8; else ffmpeg -y -loglevel error -ss 1 -i "$v" -frames:v 1 -vf "scale=512:-2" "$f"; fi; fi; caelestia wallpaper -f "$f" "${@:4}" && printf %s "$v" > "$p"',
+            'f="$1"; v="$2"; p="$3"; t="${f%/*}"; mkdir -p "$t"; if [ ! -f "$f" ]; then if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$v" -o "$f" -s 0 -q 10; else ffmpeg -y -loglevel error -ss 1 -i "$v" -frames:v 1 -q:v 2 "$f"; fi; fi; caelestia wallpaper -f "$f" "${@:4}" && printf %s "$v" > "$p"',
             "--",
             videoThumbPath(path),
             path,
@@ -177,7 +177,7 @@ Searcher {
         command: [
             "sh",
             "-c",
-            'for f in "$@"; do d="${f%/*}/.thumbs"; n="${f##*/}"; n="${n%.*}"; t="$d/$n.jpg"; [ -f "$t" ] && continue; mkdir -p "$d"; if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$f" -o "$t" -s 512 -q 8; else ffmpeg -y -loglevel error -ss 1 -i "$f" -frames:v 1 -vf "scale=512:-2" "$t"; fi; done',
+            'for f in "$@"; do d="${f%/*}/.thumbs"; n="${f##*/}"; n="${n%.*}"; t="$d/$n.jpg"; [ -f "$t" ] && continue; mkdir -p "$d"; if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$f" -o "$t" -s 0 -q 10; else ffmpeg -y -loglevel error -ss 1 -i "$f" -frames:v 1 -q:v 2 "$t"; fi; done',
             "--",
             ...videoWallpapers.entries.map(entry => entry.path)
         ]
