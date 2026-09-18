@@ -46,11 +46,20 @@ class BackgroundVisualiser : public settings::ObjectNode {
     CONFIG_PROPERTY(qreal, spacing, 1)
 };
 
+class BackgroundVideo : public settings::ObjectNode {
+    CONFIG_NODE(BackgroundVideo, settings::ObjectNode)
+
+    CONFIG_PROPERTY(bool, muted, true)
+    CONFIG_PROPERTY(bool, pauseOnFullscreen, true)
+    CONFIG_PROPERTY(bool, pauseInGameMode, true)
+};
+
 class BackgroundConfig : public settings::ObjectNode {
     CONFIG_NODE(BackgroundConfig, settings::ObjectNode)
 
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(bool, wallpaperEnabled, true)
+    CONFIG_SUBOBJECT(BackgroundVideo, video)
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)
     CONFIG_SUBOBJECT(BackgroundVisualiser, visualiser)
 };
