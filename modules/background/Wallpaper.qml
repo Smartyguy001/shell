@@ -141,10 +141,11 @@ Item {
 
             anchors.fill: parent
             path: Wallpapers.displayPathFor(img.wallpaperPath)
+            retainWhileLoading: true
             opacity: 0
 
             onStatusChanged: {
-                if (status === Image.Ready) {
+                if (status === Image.Ready && !ready) {
                     ready = true;
                     anim.start();
                 }
@@ -183,7 +184,7 @@ Item {
             opacity: 0
 
             onStatusChanged: {
-                if (status === AnimatedImage.Ready) {
+                if (status === AnimatedImage.Ready && !ready) {
                     ready = true;
                     anim.start();
                 }
