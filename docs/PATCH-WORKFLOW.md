@@ -37,7 +37,10 @@ Run the complete synchronization from any branch:
 
 Use `--no-push` for a local rehearsal, `--skip-rebase` to rebuild `live` from
 already-updated patch branches, or `--upstream URL --remote NAME` for another
-pair of remotes.
+pair of remotes. Add `--install` to build the rebuilt `live` and install it
+(`cmake -B build … && cmake --build build && sudo cmake --install build`);
+extra CMake flags go in `CMAKE_ARGS`, e.g.
+`CMAKE_ARGS="-DINSTALL_QSCONFDIR=$HOME/.config/quickshell/caelestia" ./scripts/sync-upstream.sh --install`.
 
 ## Optional weekly workflow
 
