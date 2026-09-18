@@ -6,6 +6,7 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.images
 import qs.utils
 
 Item {
@@ -75,17 +76,11 @@ Item {
                 fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.DemiBold).build()
             }
 
-            Image {
+            CachingImage {
                 id: img
 
                 anchors.fill: parent
-                asynchronous: true
-                fillMode: Image.PreserveAspectCrop
-                source: root.displayPath
-                sourceSize: {
-                    const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                    return Qt.size(width * dpr, height * dpr);
-                }
+                path: root.displayPath
                 retainWhileLoading: true
                 opacity: status === Image.Ready ? 1 : 0
 
