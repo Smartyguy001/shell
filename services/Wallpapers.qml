@@ -177,11 +177,17 @@ Searcher {
         command: [
             "sh",
             "-c",
-            'for f in "$@"; do d="${f%/*}/.thumbs"; n="${f##*/}"; n="${n%.*}"; t="$d/$n.jpg"; [ -f "$t" ] && continue; mkdir -p "$d"; if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$f" -o "$t" -s 0 -q 10; else ffmpeg -y -loglevel error -ss 1 -i "$f" -frames:v 1 -q:v 2 "$t"; fi; done',
+            'for f in "$@"; do d="${f%/*}/.thumbs"; n="${f##*/}"; n="${n%.*}"; t="$d/$n.jpg"; [ -f "$t" ] && continue; mkdir -p "$d"; if command -v ffmpegthumbnailer >/dev/null 2>&1; then ffmpegthumbnailer -i "$f" -o "$t" -s 0 -q 10; else ffmpeg -y -loglevel error -ss 1 -i "$f" -frames:v 1 -q:v 2 "$t"; fi; echo changed; done',
             "--",
             ...videoWallpapers.entries.map(entry => entry.path)
         ]
-        onExited: thumbVersion++
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.length > 0)
+                    root.thumbVersion++;
+            }
+        }
     }
 
     Process {
