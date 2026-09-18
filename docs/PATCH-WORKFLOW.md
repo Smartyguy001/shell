@@ -18,6 +18,10 @@ number and the exact head SHA that was ported, so contributor churn is visible.
 4. Add the branch, PR number, and ported head SHA to `patches.list`.
 5. Push the patch branch and review its diff before enabling it in `live`.
 
+Stacked patches may use `depends:<branch>` in the note column. Put the parent
+branch first in `patches.list`, rebase the dependent branch onto that parent,
+and merge them in that order.
+
 When the script reports **NEW COMMITS**, fetch the new PR head, inspect
 `git diff <recorded-sha> <new-sha>`, then refresh the ported patch deliberately.
 Update its recorded SHA only after re-porting and testing the patch.
