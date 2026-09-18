@@ -45,7 +45,7 @@ Item {
         } else if (Images.isGifFile(source)) {
             component = gifComp;
         }
-        current = component.createObject(root, {
+        current = component.createObject(stage, {
             wallpaperPath: path
         });
     }
@@ -215,7 +215,7 @@ Item {
             property string wallpaperPath
             property bool ready
 
-            anchors.fill: root
+            anchors.fill: parent
             opacity: 0
 
             MediaPlayer {
@@ -276,16 +276,5 @@ Item {
         Behavior on x {
             Anim {}
         }
-    }
-
-    Connections {
-        function onCurrentChanged(): void {
-            if (root.current) {
-                root.current.parent = stage;
-                root.current.anchors.fill = stage;
-            }
-        }
-
-        target: root
     }
 }
