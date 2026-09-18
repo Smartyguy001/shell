@@ -19,6 +19,11 @@ Item {
     property string source: Wallpapers.current
     property Item current
     property bool completed
+    readonly property real parallaxProgress: {
+        const ws = Hypr.monitorFor(screen)?.activeWorkspace?.id ?? 1;
+        const n = Math.max(2, Config.background.parallax.workspaces);
+        return ((ws - 1) % n) / (n - 1);
+    }
     readonly property bool isPaused: {
         const fullscreen = Hypr.monitorFor(screen)?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
         return (Config.background.video.pauseOnFullscreen && fullscreen) || (Config.background.video.pauseInGameMode && GameMode.enabled);
@@ -259,5 +264,28 @@ Item {
                 onTriggered: videoContainer.destroy()
             }
         }
+    }
+
+    Item {
+        id: stage
+
+        width: root.width * (1 + (Config.background.parallax.enabled ? Config.background.parallax.amount : 0))
+        height: root.height
+        x: -(stage.width - root.width) * root.parallaxProgress
+
+        Behavior on x {
+            Anim {}
+        }
+    }
+
+    Connections {
+        function onCurrentChanged(): void {
+            if (root.current) {
+                root.current.parent = stage;
+                root.current.anchors.fill = stage;
+            }
+        }
+
+        target: root
     }
 }
