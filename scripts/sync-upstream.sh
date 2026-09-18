@@ -76,6 +76,7 @@ for line in "${patch_lines[@]}"; do
 done
 
 git fetch --force "$upstream" main:refs/upstream/main
+git fetch "$remote"
 git switch main
 
 local_commits="$(git rev-list refs/upstream/main..main)"
@@ -102,6 +103,11 @@ if (( ! skip_rebase )); then
                 [[ "$prior" == "$base" ]] && found=1
             done
             (( found )) || die "dependency $base for $branch must appear earlier in patches.list"
+        fi
+        if ! git show-ref --verify --quiet "refs/heads/$branch"; then
+            git show-ref --verify --quiet "refs/remotes/$remote/$branch" \
+                || die "branch $branch exists neither locally nor on $remote"
+            git branch --track "$branch" "$remote/$branch"
         fi
         git rebase "$base" "$branch" || {
             echo "CONFLICT in $branch — resolve, \`git rebase --continue\`, rerun with --skip-rebase" >&2
