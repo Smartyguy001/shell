@@ -29,13 +29,15 @@
   pkg-config,
   caelestia-cli,
   m3shapes,
+  ffmpeg,
+  ffmpegthumbnailer,
   debug ? false,
   withCli ? false,
   extraRuntimeDeps ? [],
 }: let
   version = "1.0.0";
 
-  qs = quickshell.withModules [qt6.qtimageformats m3shapes];
+  qs = quickshell.withModules [qt6.qtimageformats qt6.qtmultimedia m3shapes];
 
   runtimeDeps =
     [
@@ -49,6 +51,8 @@
       libqalculate
       bash
       hyprland
+      ffmpeg
+      ffmpegthumbnailer
     ]
     ++ extraRuntimeDeps
     ++ lib.optional withCli caelestia-cli;
