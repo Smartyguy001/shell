@@ -57,6 +57,7 @@ mapfile -t patch_lines < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' 
 declare -a branches=()
 declare -a prs=()
 declare -a recorded_heads=()
+declare -a dependencies=()
 
 for line in "${patch_lines[@]}"; do
     read -r branch pr recorded_head note <<< "$line"
@@ -65,6 +66,13 @@ for line in "${patch_lines[@]}"; do
     branches+=("$branch")
     prs+=("$pr")
     recorded_heads+=("$recorded_head")
+    dependency="main"
+    for token in $note; do
+        if [[ "$token" == depends:* ]]; then
+            dependency="${token#depends:}"
+        fi
+    done
+    dependencies+=("$dependency")
 done
 
 git fetch --force "$upstream" main:refs/upstream/main
@@ -85,8 +93,17 @@ fi
 git config rerere.enabled true
 
 if (( ! skip_rebase )); then
-    for branch in "${branches[@]}"; do
-        git rebase main "$branch" || {
+    for i in "${!branches[@]}"; do
+        branch="${branches[$i]}"
+        base="${dependencies[$i]}"
+        if [[ "$base" != "main" ]]; then
+            found=0
+            for prior in "${branches[@]:0:i}"; do
+                [[ "$prior" == "$base" ]] && found=1
+            done
+            (( found )) || die "dependency $base for $branch must appear earlier in patches.list"
+        fi
+        git rebase "$base" "$branch" || {
             echo "CONFLICT in $branch — resolve, \`git rebase --continue\`, rerun with --skip-rebase" >&2
             exit 1
         }
