@@ -65,6 +65,9 @@ void CachingImageResponse::run() {
 
 void CachingImageResponse::process() {
     QString path = QString::fromUtf8(m_id.toUtf8().percentDecoded());
+    const qsizetype query = path.indexOf(u'?');
+    if (query >= 0)
+        path.truncate(query);
     if (!path.startsWith(u'/'))
         path.prepend(u'/');
 
