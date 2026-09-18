@@ -209,6 +209,7 @@ PageBase {
             label: Tr.tr("Parallax amount")
             valueLabel: `${Math.round(Config.background.parallax.amount * 100)}%`
             value: Config.background.parallax.amount
+            interactionOnMove: false
             onMoved: value => GlobalConfig.background.parallax.amount = value
         }
 
