@@ -130,7 +130,9 @@ Searcher {
                 wall = root.fallback;
                 Quickshell.execDetached(["caelestia", "wallpaper", "-f", root.fallback, ...root.smartArg]);
             }
-            root.actualCurrent = wall;
+            const transientThumb = Images.isVideoFile(root.actualCurrent) && wall === root.videoThumbPath(root.actualCurrent);
+            if (!transientThumb)
+                root.actualCurrent = wall;
             root.previewColourLock = false;
         }
         onLoadFailed: {
