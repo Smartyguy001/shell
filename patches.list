@@ -1,0 +1,4 @@
+# branch upstream_pr ported_head_sha note
+personal/sync-tooling - - sync script + patches.list
+patches/1710-video-wallpaper 1710 6aa56f29a232d55d3392d15173407b9f252bca47 video wallpapers (separate video dir), gif playback; thumbs shell-side
+personal/parallax - - workspace parallax; depends:patches/1710-video-wallpaper
