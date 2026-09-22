@@ -16,7 +16,7 @@ Singleton {
 
     function apply(): void {
         proc.running = false;
-        proc.command = ["sh", "-c", "hyprctl hyprsunset temperature " + temperature + " >/dev/null 2>&1 || { hyprsunset -t " + temperature + " >/dev/null 2>&1 & }"];
+        proc.command = ["sh", "-c", "hyprctl hyprsunset temperature " + root.temperature + " >/dev/null 2>&1 || { hyprsunset -t " + root.temperature + " >/dev/null 2>&1 & }"];
         proc.running = true;
     }
 
@@ -72,11 +72,11 @@ Singleton {
         }
 
         function setTemperature(temp: int): void {
-            GlobalConfig.utilities.nightLight.temperature = temp;
+            GlobalConfig.utilities.nightLight.temperature = Math.max(1000, Math.min(6500, temp));
         }
 
         function getTemperature(): int {
-            return temperature;
+            return root.temperature;
         }
 
         target: "nightLight"
