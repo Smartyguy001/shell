@@ -237,7 +237,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
 > - `notifs`: `actionOnClick`, `defaultExpireTimeout`, `expire`, `fullscreen`, `fullscreenExpireTimeout`
 > - `paths`: `lyricsDir`, `wallpaperDir`
 > - `services`: `audioIncrement`, `brightnessIncrement`, `clockFormat`, `dataUnits`, `defaultPlayer`, `gpuType`, `lyricsBackend`, `maxVolume`, `playerAliases`, `sensorUnits`, `smartScheme`, `visualiserBars`, `weatherLocation`, `weatherUnits`
-> - `utilities`: `toasts.*`, `vpn.*`
+> - `utilities`: `nightLight.*`, `toasts.*`, `vpn.*`
 >
 > </details>
 
@@ -787,6 +787,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
             "configLoaded": true,
             "chargingChanged": true,
             "gameModeChanged": true,
+            "nightLightChanged": true,
             "dndChanged": true,
             "audioOutputChanged": true,
             "audioInputChanged": true,
@@ -807,6 +808,9 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
                     "enabled": false
                 }
             ]
+        },
+        "nightLight": {
+            "temperature": 4000
         },
         "quickToggles": [
             {
@@ -831,6 +835,10 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
             },
             {
                 "id": "dnd",
+                "enabled": true
+            },
+            {
+                "id": "nightLight",
                 "enabled": true
             },
             {
