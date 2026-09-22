@@ -2,3 +2,11 @@
 personal/sync-tooling - - sync script + patches.list
 patches/1710-video-wallpaper 1710 6aa56f29a232d55d3392d15173407b9f252bca47 video wallpapers (separate video dir), gif playback; thumbs shell-side
 personal/parallax - - workspace parallax; depends:patches/1710-video-wallpaper
+patches/2053-lock-reacquire 2053 95b098110046a68d54e44f678f46200718b2c849 lock reacquire after crash
+patches/2021-notifs-clear-batch 2021 7c36468da506880835f0cf0678d5abd6b5637849 batch notification clearing
+patches/1889-idle-inhibitor-singleton 1889 43b848ba28e16662b495d0ac084117ba9115ae57 idle inhibitor singleton state
+patches/1995-netusage-per-iface 1995 b4168f06f231eef963c9c69480b448239e003734 network usage per interface
+patches/2056-font-tokens-perf 2056 d02ff68f91ac3f8f9d897382602b5b90e4dba6c1 lazy font token construction
+patches/2054-blob-deform-fade 2054 5d9d421019288136fc826805aa3118cdf4e1d234 blob deform fade
+patches/2042-flickable-clicks 2042 101fa2f32f3c5269047539c5e460d25c43968efd preserve flickable clicks
+patches/1983-nexus-nav-wheel 1983 53b7b5c204ecc418a644e4eaf6573c562eb5a2fe nexus navigation wheel containment
