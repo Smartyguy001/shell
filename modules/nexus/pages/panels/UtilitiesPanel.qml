@@ -169,9 +169,10 @@ PageBase {
             last: true
             icon: "nights_stay"
             label: Tr.tr("Temperature")
-            valueLabel: Math.round(1000 + value * 5500) + "K"
+            interactionOnMove: false
+            valueLabel: Math.round((1000 + value * 5500) / 100) * 100 + "K"
             value: (GlobalConfig.utilities.nightLight.temperature - 1000) / 5500
-            onMoved: v => GlobalConfig.utilities.nightLight.temperature = Math.round(1000 + v * 5500)
+            onMoved: v => GlobalConfig.utilities.nightLight.temperature = Math.round((1000 + v * 5500) / 100) * 100
         }
     }
 }
