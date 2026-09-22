@@ -140,6 +140,14 @@ StyledRect {
                     }
                 }
                 DelegateChoice {
+                    roleValue: "nightLight"
+                    delegate: Toggle {
+                        icon: "nights_stay"
+                        checked: NightLight.enabled
+                        onClicked: NightLight.enabled = !NightLight.enabled
+                    }
+                }
+                DelegateChoice {
                     roleValue: "vpn"
                     delegate: Toggle {
                         icon: "vpn_key"
