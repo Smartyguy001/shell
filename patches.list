@@ -10,3 +10,4 @@ patches/2056-font-tokens-perf 2056 d02ff68f91ac3f8f9d897382602b5b90e4dba6c1 lazy
 patches/2054-blob-deform-fade 2054 5d9d421019288136fc826805aa3118cdf4e1d234 blob deform fade
 patches/2042-flickable-clicks 2042 101fa2f32f3c5269047539c5e460d25c43968efd preserve flickable clicks
 patches/1983-nexus-nav-wheel 1983 53b7b5c204ecc418a644e4eaf6573c562eb5a2fe nexus navigation wheel containment
+personal/nightlight - - manual night light via hyprsunset (quick toggle + temperature)
