@@ -141,6 +141,12 @@ PageBase {
         }
 
         ToggleRow {
+            text: Tr.tr("Night light changes")
+            checked: GlobalConfig.utilities.toasts.nightLightChanged
+            onToggled: GlobalConfig.utilities.toasts.nightLightChanged = checked
+        }
+
+        ToggleRow {
             text: Tr.tr("Do not disturb changes")
             checked: GlobalConfig.utilities.toasts.dndChanged
             onToggled: GlobalConfig.utilities.toasts.dndChanged = checked
