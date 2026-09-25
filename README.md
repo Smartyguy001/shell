@@ -89,7 +89,10 @@ Dependencies:
 -   `qt6-base`
 -   `qt6-declarative`
 -   `qt6-imageformats`
+-   `qt6-multimedia`
 -   [`qt6-m3shapes-git`](https://github.com/soramanew/m3shapes)
+-   `ffmpeg`
+-   `ffmpegthumbnailer` (optional, preferred for video thumbnails)
 -   [`swappy`](https://github.com/jtheoof/swappy)
 -   [`fish`](https://github.com/fish-shell/fish-shell)
 -   [`bash`](https://www.gnu.org/software/bash)
@@ -235,7 +238,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
 > - `lock`: `enableFprint`, `enableHowdy`, `maxFprintTries`, `maxHowdyTries`, `triggerHowdyOnWake`
 > - `nexus`: `networkRescanInterval`
 > - `notifs`: `actionOnClick`, `defaultExpireTimeout`, `expire`, `fullscreen`, `fullscreenExpireTimeout`
-> - `paths`: `lyricsDir`, `wallpaperDir`
+> - `paths`: `lyricsDir`, `videoWallpaperDir`, `wallpaperDir`
 > - `services`: `audioIncrement`, `brightnessIncrement`, `clockFormat`, `dataUnits`, `defaultPlayer`, `gpuType`, `lyricsBackend`, `maxVolume`, `playerAliases`, `sensorUnits`, `smartScheme`, `visualiserBars`, `weatherLocation`, `weatherUnits`
 > - `utilities`: `toasts.*`, `vpn.*`
 >
@@ -382,6 +385,11 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
     "background": {
         "enabled": true,
         "wallpaperEnabled": true,
+        "video": {
+            "muted": true,
+            "pauseOnFullscreen": true,
+            "pauseInGameMode": true
+        },
         "desktopClock": {
             "enabled": false,
             "scale": 1.0,
@@ -841,6 +849,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
     },
     "paths": {
         "wallpaperDir": "~/Pictures/Wallpapers",
+        "videoWallpaperDir": "~/Videos/Wallpapers",
         "lyricsDir": "~/Music/lyrics/",
         "sessionGif": "root:/assets/kurukuru.gif",
         "mediaGif": "root:/assets/bongocat.gif",
