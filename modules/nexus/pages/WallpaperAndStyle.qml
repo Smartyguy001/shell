@@ -9,6 +9,7 @@ import qs.components
 import qs.components.controls
 import qs.components.images
 import qs.services
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -115,7 +116,9 @@ PageBase {
 
                     interval: 100
                     onTriggered: {
-                        if (wallImg.status !== Image.Ready)
+                        if (wallImg.status === Image.Error)
+                            wallIndicatorLoader.opacity = 0;
+                        else if (wallImg.status !== Image.Ready)
                             wallIndicatorLoader.opacity = 1;
                     }
                 }
@@ -124,7 +127,7 @@ PageBase {
                     id: wallImg
 
                     anchors.fill: parent
-                    source: Wallpapers.current
+                    source: Wallpapers.displayPathFor(Wallpapers.current)
                     preventInit: wallIndicatorLoader.opacity > 0
                     fadeOutAnim: Anim.DefaultEffects
                     fadeInAnim: Anim.SlowEffects
@@ -176,6 +179,24 @@ PageBase {
             text: Tr.tr("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
+        }
+
+        ToggleRow {
+            text: Tr.tr("Mute video wallpapers")
+            checked: Config.background.video.muted
+            onToggled: GlobalConfig.background.video.muted = checked
+        }
+
+        ToggleRow {
+            text: Tr.tr("Pause video on fullscreen")
+            checked: Config.background.video.pauseOnFullscreen
+            onToggled: GlobalConfig.background.video.pauseOnFullscreen = checked
+        }
+
+        ToggleRow {
+            text: Tr.tr("Pause video in game mode")
+            checked: Config.background.video.pauseInGameMode
+            onToggled: GlobalConfig.background.video.pauseInGameMode = checked
         }
 
         ToggleRow {
