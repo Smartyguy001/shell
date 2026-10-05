@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.services
 import qs.modules.nexus.common
 
 PageBase {
@@ -135,12 +136,43 @@ PageBase {
         }
 
         ToggleRow {
+            text: Tr.tr("Night light")
+            subtext: Tr.tr("Toggle the colour temperature filter")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("nightLight")
+            onToggled: root.setToggleOn("nightLight", checked)
+        }
+
+        ToggleRow {
             last: true
             text: Tr.tr("VPN")
             subtext: Tr.tr("Connect or disconnect the VPN")
             disabled: !Config.utilities.cards.quickToggles
             checked: root.isToggleOn("vpn")
             onToggled: root.setToggleOn("vpn", checked)
+        }
+
+        // Night light
+        SectionHeader {
+            text: Tr.tr("Night light")
+        }
+
+        ToggleRow {
+            first: true
+            text: Tr.trCtx("Enabled", "toggle label")
+            subtext: Tr.tr("Warm the screen colours using hyprsunset")
+            checked: NightLight.enabled
+            onToggled: NightLight.enabled = checked
+        }
+
+        SliderRow {
+            last: true
+            icon: "nights_stay"
+            label: Tr.tr("Temperature")
+            interactionOnMove: false
+            valueLabel: Math.round((1000 + value * 5500) / 100) * 100 + "K"
+            value: (GlobalConfig.utilities.nightLight.temperature - 1000) / 5500
+            onMoved: v => GlobalConfig.utilities.nightLight.temperature = Math.round((1000 + v * 5500) / 100) * 100
         }
     }
 }
