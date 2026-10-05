@@ -390,6 +390,11 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
             "pauseOnFullscreen": true,
             "pauseInGameMode": true
         },
+        "parallax": {
+            "enabled": false,
+            "amount": 0.05,
+            "workspaces": 10
+        },
         "desktopClock": {
             "enabled": false,
             "scale": 1.0,

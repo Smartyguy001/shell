@@ -19,6 +19,11 @@ Item {
     property string source: Wallpapers.current
     property Item current
     property bool completed
+    readonly property real parallaxProgress: {
+        const ws = Hypr.monitorFor(screen)?.activeWorkspace?.id ?? 1;
+        const n = Math.max(2, Config.background.parallax.workspaces);
+        return ((ws - 1) % n) / (n - 1);
+    }
     readonly property bool isPaused: {
         const fullscreen = Hypr.monitorFor(screen)?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
         return (Config.background.video.pauseOnFullscreen && fullscreen) || (Config.background.video.pauseInGameMode && GameMode.enabled);
@@ -40,7 +45,7 @@ Item {
         } else if (Images.isGifFile(source)) {
             component = gifComp;
         }
-        current = component.createObject(root, {
+        current = component.createObject(stage, {
             wallpaperPath: path
         });
     }
@@ -136,10 +141,11 @@ Item {
 
             anchors.fill: parent
             path: Wallpapers.displayPathFor(img.wallpaperPath)
+            retainWhileLoading: true
             opacity: 0
 
             onStatusChanged: {
-                if (status === Image.Ready) {
+                if (status === Image.Ready && !ready) {
                     ready = true;
                     anim.start();
                 }
@@ -178,7 +184,7 @@ Item {
             opacity: 0
 
             onStatusChanged: {
-                if (status === AnimatedImage.Ready) {
+                if (status === AnimatedImage.Ready && !ready) {
                     ready = true;
                     anim.start();
                 }
@@ -210,7 +216,7 @@ Item {
             property string wallpaperPath
             property bool ready
 
-            anchors.fill: root
+            anchors.fill: parent
             opacity: 0
 
             MediaPlayer {
@@ -258,6 +264,18 @@ Item {
                 interval: videoAnim.duration
                 onTriggered: videoContainer.destroy()
             }
+        }
+    }
+
+    Item {
+        id: stage
+
+        width: root.width * (1 + (Config.background.parallax.enabled ? Config.background.parallax.amount : 0))
+        height: root.height
+        x: -(stage.width - root.width) * root.parallaxProgress
+
+        Behavior on x {
+            Anim {}
         }
     }
 }
