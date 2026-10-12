@@ -120,11 +120,18 @@ if (( ! skip_rebase )); then
             if git merge-base --is-ancestor "$branch" "$remote/$branch"; then
                 git branch -f "$branch" "$remote/$branch"
             elif ! git merge-base --is-ancestor "$remote/$branch" "$branch"; then
-                die "$branch has diverged from $remote/$branch — reconcile (git rebase $remote/$branch $branch, or git push --force-with-lease $remote $branch after a --no-push run) and rerun"
+                # A conflicted rebase finished by hand on a previous run: already on the
+                # new base while the remote copy is not, so keep it and push it below.
+                if git merge-base --is-ancestor "$base" "$branch" &&
+                    ! git merge-base --is-ancestor "$base" "$remote/$branch"; then
+                    echo "$branch: already rebased locally, keeping it"
+                else
+                    die "$branch has diverged from $remote/$branch — reconcile (git rebase $remote/$branch $branch, or git push --force-with-lease $remote $branch after a --no-push run) and rerun"
+                fi
             fi
         fi
         git rebase "$base" "$branch" || {
-            echo "CONFLICT in $branch — resolve, \`git rebase --continue\`, rerun with --skip-rebase" >&2
+            echo "CONFLICT in $branch — resolve, \`git add\` the files, \`git rebase --continue\`, then \`git switch live\` and rerun this script (same flags)" >&2
             exit 1
         }
         if (( ! no_push )); then
