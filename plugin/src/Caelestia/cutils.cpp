@@ -60,7 +60,7 @@ void CUtils::saveItem(
             QtConcurrent::run([image = grabResult->image(), scaledRect, file = path.toLocalFile()] {
                 const auto img = scaledRect.isValid() ? image.copy(scaledRect) : image;
                 const auto parent = QFileInfo(file).absolutePath();
-                return QDir().mkpath(parent) && img.save(file);
+                return QDir().mkpath(parent) && img.save(file, nullptr, 60);
             }).then(this, [path, onSaved, onFailed](bool ok) {
                 const auto* cb = ok ? &onSaved : &onFailed;
                 if (!ok)
