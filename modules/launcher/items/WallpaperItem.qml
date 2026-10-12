@@ -76,6 +76,7 @@ Item {
                 const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
                 return Qt.size(image.implicitWidth * dpr, image.implicitHeight * dpr);
             }
+            retainWhileLoading: true
         }
 
         StyledRect {
