@@ -9,6 +9,7 @@ import Caelestia.I18n
 import qs.components
 import qs.components.effects
 import qs.services
+import qs.utils
 
 MouseArea {
     id: root
@@ -81,11 +82,11 @@ MouseArea {
     }
 
     function save(): void {
-        const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
-        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
+        const file = root.loader.clipboardOnly ? `${Paths.screenshotsdir}/screenshot-${Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH.mm.ss")}.png` : `/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`;
+        CUtils.saveItem(screencopy, Qt.resolvedUrl(file), Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
             if (root.loader.clipboardOnly) {
-                Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < " + path]);
-                Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, Tr.tr("Screenshot taken"), Tr.tr("Screenshot copied to clipboard")]);
+                Quickshell.execDetached(["sh", "-c", `wl-copy --type image/png < "${path}"`]);
+                Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, Tr.tr("Screenshot taken"), Tr.tr("Screenshot saved to %1 and copied to clipboard").arg(path)]);
             } else {
                 Quickshell.execDetached(["swappy", "-f", path]);
             }
