@@ -1,5 +1,6 @@
 #pragma once
 
+#include <qimage.h>
 #include <qmutex.h>
 #include <qobject.h>
 #include <qset.h>
@@ -22,6 +23,8 @@ public:
 
     static const QString& cacheDir();
     static QString cachePathFor(const QString& sourcePath, const QSize& size, FillMode fillMode);
+    static QImage render(const QString& sourcePath, const QSize& size, FillMode fillMode);
+    static bool store(const QImage& image, const QString& cachePath);
 
     void schedule(const QString& sourcePath, const QSize& size, FillMode fillMode);
     void schedule(const QString& sourcePath, const QString& cachePath, const QSize& size, FillMode fillMode);

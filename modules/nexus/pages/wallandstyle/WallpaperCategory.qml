@@ -39,6 +39,7 @@ PageBase {
                 // Empty placeholders for sizing
                 opacity: modelData ? 1 : 0
                 enabled: modelData
+                flickable: root.flickable
 
                 source: String(modelData?.path ?? "")
                 text: modelData?.name ?? ""
