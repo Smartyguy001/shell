@@ -35,7 +35,7 @@ Singleton {
             let response;
             try {
                 response = JSON.parse(text);
-            } catch {
+            } catch (e) {
                 root.showError(Tr.tr("Unable to parse Konachan response"));
                 return;
             }
@@ -81,11 +81,11 @@ Singleton {
         let segment = url.split(/[?#]/, 1)[0].split("/").pop() ?? "";
         try {
             segment = decodeURIComponent(segment);
-        } catch {
+        } catch (e) {
             segment = segment.replace(/(?:%[0-9A-Fa-f]{2})+/g, sequence => {
                 try {
                     return decodeURIComponent(sequence);
-                } catch {
+                } catch (e) {
                     return sequence.replace(/%([0-9A-Fa-f]{2})/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
                 }
             });
