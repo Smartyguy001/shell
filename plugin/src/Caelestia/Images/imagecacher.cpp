@@ -4,7 +4,7 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-#include <qimage.h>
+#include <qimagereader.h>
 #include <qloggingcategory.h>
 #include <qmutex.h>
 #include <qpainter.h>
@@ -22,20 +22,6 @@ namespace caelestia::images {
 using Qt::StringLiterals::operator""_s;
 
 namespace {
-
-QString sha256sum(const QString& path) {
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCWarning(lcCacher).noquote() << "sha256sum: failed to open" << path;
-        return {};
-    }
-
-    QCryptographicHash hash(QCryptographicHash::Sha256);
-    hash.addData(&file);
-    file.close();
-
-    return QString::fromLatin1(hash.result().toHex());
-}
 
 QString fillSuffix(ImageCacher::FillMode fillMode) {
     switch (fillMode) {
@@ -61,9 +47,14 @@ const QString& ImageCacher::cacheDir() {
 }
 
 QString ImageCacher::cachePathFor(const QString& sourcePath, const QSize& size, FillMode fillMode) {
-    const QString sha = sha256sum(sourcePath);
-    if (sha.isEmpty())
+    const QFileInfo sourceInfo(sourcePath);
+    if (!sourceInfo.exists())
         return {};
+
+    const QString sourceKey = sourceInfo.absoluteFilePath() + u'\n' + QString::number(sourceInfo.size()) + u'\n'
+        + QString::number(sourceInfo.lastModified().toMSecsSinceEpoch());
+    const QString sha = QString::fromLatin1(
+        QCryptographicHash::hash(sourceKey.toUtf8(), QCryptographicHash::Sha256).toHex());
 
     const QString filename = u"%1@%2x%3-%4.png"_s.arg(
         sha, QString::number(size.width()), QString::number(size.height()), fillSuffix(fillMode));
@@ -102,15 +93,12 @@ void ImageCacher::schedule(const QString& sourcePath, const QString& cachePath, 
     });
 }
 
-void ImageCacher::runJob(const QString& sourcePath, const QString& cachePath, const QSize& size, FillMode fillMode) {
-    if (QFile::exists(cachePath)) {
-        return;
-    }
-
-    QImage image(sourcePath);
-    if (image.isNull()) {
+QImage ImageCacher::render(const QString& sourcePath, const QSize& size, FillMode fillMode) {
+    QImageReader reader(sourcePath);
+    const QSize sourceSize = reader.size();
+    if (!sourceSize.isValid() || sourceSize.isEmpty()) {
         qCWarning(lcCacher).noquote() << "Failed to decode source" << sourcePath;
-        return;
+        return {};
     }
 
     Qt::AspectRatioMode scaleMode;
@@ -126,12 +114,23 @@ void ImageCacher::runJob(const QString& sourcePath, const QString& cachePath, co
         break;
     }
 
+    const QSize targetSize = fillMode == FillMode::Stretch ? size : sourceSize.scaled(size, scaleMode);
+    if (targetSize.width() < sourceSize.width() && targetSize.height() < sourceSize.height())
+        reader.setScaledSize(targetSize);
+
+    QImage image = reader.read();
+    if (image.isNull()) {
+        qCWarning(lcCacher).noquote() << "Failed to decode source" << sourcePath;
+        return {};
+    }
+
     image.convertTo(QImage::Format_ARGB32);
-    image = image.scaled(size, scaleMode, Qt::SmoothTransformation);
+    if (image.size() != targetSize)
+        image = image.scaled(size, scaleMode, Qt::SmoothTransformation);
 
     if (image.isNull()) {
         qCWarning(lcCacher).noquote() << "Failed to scale" << sourcePath;
-        return;
+        return {};
     }
 
     QImage canvas;
@@ -146,20 +145,35 @@ void ImageCacher::runJob(const QString& sourcePath, const QString& cachePath, co
         painter.end();
     }
 
+    return canvas;
+}
+
+bool ImageCacher::store(const QImage& image, const QString& cachePath) {
     const QString parent = QFileInfo(cachePath).absolutePath();
     if (!QDir().mkpath(parent)) {
         qCWarning(lcCacher).noquote() << "Failed to create cache dir" << parent;
-        return;
+        return false;
     }
 
     QSaveFile saveFile(cachePath);
-    if (!saveFile.open(QIODevice::WriteOnly) || !canvas.save(&saveFile, "PNG") || !saveFile.commit()) {
+    if (!saveFile.open(QIODevice::WriteOnly) || !image.save(&saveFile, "PNG") || !saveFile.commit()) {
         qCWarning(
             lcCacher, "Failed to save to %s: %s", qUtf8Printable(cachePath), qUtf8Printable(saveFile.errorString()));
-        return;
+        return false;
     }
 
     qCDebug(lcCacher).noquote() << "Saved to" << cachePath;
+    return true;
+}
+
+void ImageCacher::runJob(const QString& sourcePath, const QString& cachePath, const QSize& size, FillMode fillMode) {
+    if (QFile::exists(cachePath))
+        return;
+
+    const QImage image = render(sourcePath, size, fillMode);
+    if (image.isNull())
+        return;
+    store(image, cachePath);
 }
 
 } // namespace caelestia::images
