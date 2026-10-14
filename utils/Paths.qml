@@ -26,6 +26,7 @@ Singleton {
     readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.wallpaperDir)
     readonly property string videowallsdir: Quickshell.env("CAELESTIA_VIDEO_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.videoWallpaperDir)
     readonly property string recsdir: Quickshell.env("CAELESTIA_RECORDINGS_DIR") || `${videos}/Recordings`
+    readonly property string screenshotsdir: Quickshell.env("CAELESTIA_SCREENSHOTS_DIR") || `${pictures}/Screenshots`
     readonly property string libdir: Quickshell.env("CAELESTIA_LIB_DIR") || "/usr/lib/caelestia"
 
     function toLocalFile(path: url): string {
