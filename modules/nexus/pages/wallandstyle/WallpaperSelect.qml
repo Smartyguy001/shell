@@ -70,6 +70,22 @@ PageBase {
                     root.nState.closeSubPage();
                 }
             }
+
+            IconTextButton {
+                icon: "cloud_download"
+                text: Tr.tr("Konachan")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                type: IconTextButton.Tonal
+                disabled: Konachan.busy
+                onClicked: {
+                    Konachan.setRandom();
+                    root.nState.closeSubPage();
+                }
+            }
         }
 
         WallItem {
@@ -82,6 +98,28 @@ PageBase {
                 Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
                 root.nState.closeSubPage();
             }
+        }
+
+        StyledText {
+            Layout.topMargin: Tokens.spacing.large
+            text: Tr.tr("Konachan")
+            font: Tokens.font.title.small
+        }
+
+        ToggleRow {
+            first: true
+            text: Tr.tr("Safe only")
+            subtext: Tr.tr("Only download images rated safe")
+            checked: GlobalConfig.services.konachanSafeOnly
+            onToggled: GlobalConfig.services.konachanSafeOnly = checked
+        }
+
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Extra tags")
+            placeholderText: Tr.tr("scenic sky")
+            value: GlobalConfig.services.konachanTags
+            onEditingFinished: value => GlobalConfig.services.konachanTags = value
         }
 
         StyledText {
