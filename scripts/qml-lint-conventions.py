@@ -22,6 +22,8 @@ fixed source, and only for `--file - --fix`. Colour is dropped when stderr is
 not a terminal, and never appears in --json output.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import re

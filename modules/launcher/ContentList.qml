@@ -52,6 +52,10 @@ Item {
                 root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
             }
+
+            StateChangeScript {
+                script: Wallpapers.updateThumbs()
+            }
         }
     ]
 
@@ -140,7 +144,7 @@ Item {
             }
 
             StyledText {
-                text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? Tr.tr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : Tr.tr("Try searching for something else")
+                text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? Tr.tr("Try putting wallpapers in %1 or videos in %2").arg(Paths.shortenHome(Paths.wallsdir)).arg(Paths.shortenHome(Paths.videowallsdir)) : Tr.tr("Try searching for something else")
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.body.medium
             }
