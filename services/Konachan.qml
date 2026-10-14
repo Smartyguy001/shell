@@ -35,7 +35,7 @@ Singleton {
             let response;
             try {
                 response = JSON.parse(text);
-            } catch (error) {
+            } catch {
                 root.showError(Tr.tr("Unable to parse Konachan response"));
                 return;
             }
@@ -73,15 +73,19 @@ Singleton {
         });
     }
 
+    function utf8Length(codePoint: int): int {
+        return codePoint <= 0x7F ? 1 : codePoint <= 0x7FF ? 2 : codePoint <= 0xFFFF ? 3 : 4;
+    }
+
     function fileNameFor(url: string, id: var, ext: string): string {
         let segment = url.split(/[?#]/, 1)[0].split("/").pop() ?? "";
         try {
             segment = decodeURIComponent(segment);
-        } catch (error) {
+        } catch {
             segment = segment.replace(/(?:%[0-9A-Fa-f]{2})+/g, sequence => {
                 try {
                     return decodeURIComponent(sequence);
-                } catch (decodeError) {
+                } catch {
                     return sequence.replace(/%([0-9A-Fa-f]{2})/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
                 }
             });
@@ -95,22 +99,19 @@ Singleton {
             name = name.slice(0, -suffix.length);
         name = name.replace(/[. ]+$/g, "");
 
-        let stem = name || Tr.tr("Konachan.com - %1").arg(id);
-        const byteLength = (value: string): int => {
-            let bytes = 0;
-            for (const character of value) {
-                const codePoint = character.codePointAt(0);
-                bytes += codePoint <= 0x7F ? 1 : codePoint <= 0x7FF ? 2 : codePoint <= 0xFFFF ? 3 : 4;
-            }
-            return bytes;
-        };
-        const maxStemBytes = Math.max(0, 255 - byteLength(suffix));
-        if (byteLength(stem) > maxStemBytes) {
+        let stem = name || `Konachan.com - ${id}`;
+        let stemBytes = 0;
+        for (const character of stem)
+            stemBytes += root.utf8Length(character.codePointAt(0));
+        let suffixBytes = 0;
+        for (const character of suffix)
+            suffixBytes += root.utf8Length(character.codePointAt(0));
+        const maxStemBytes = Math.max(0, 255 - suffixBytes);
+        if (stemBytes > maxStemBytes) {
             let shortened = "";
             let bytes = 0;
             for (const character of stem) {
-                const codePoint = character.codePointAt(0);
-                const characterBytes = codePoint <= 0x7F ? 1 : codePoint <= 0x7FF ? 2 : codePoint <= 0xFFFF ? 3 : 4;
+                const characterBytes = root.utf8Length(character.codePointAt(0));
                 if (bytes + characterBytes > maxStemBytes)
                     break;
                 shortened += character;
@@ -120,7 +121,7 @@ Singleton {
         }
 
         if (!stem)
-            stem = Tr.tr("Konachan.com - %1").arg(id);
+            stem = `Konachan.com - ${id}`;
         return `${stem}${suffix}`;
     }
 
