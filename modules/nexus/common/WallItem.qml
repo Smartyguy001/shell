@@ -28,7 +28,10 @@ Item {
 
         const contentY = flickable.contentY;
         const viewportHeight = flickable.height;
-        const itemY = root.mapToItem(flickable.contentItem, 0, 0).y + 0 * (root.y + (root.parent?.y ?? 0));
+        // mapToItem isn't reactive, so depend on the positions it uses
+        void root.y;
+        void root.parent?.y;
+        const itemY = root.mapToItem(flickable.contentItem, 0, 0).y;
         const itemHeight = root.height;
         return itemY + itemHeight >= contentY - viewportHeight && itemY <= contentY + 2 * viewportHeight;
     }

@@ -1,6 +1,7 @@
 #include "imagecacher.hpp"
 
 #include <qcryptographichash.h>
+#include <qdatetime.h>
 #include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
