@@ -14,6 +14,7 @@ Item {
     id: root
 
     property string source
+    property Flickable flickable
     property alias text: label.text
     property alias radius: imgWrapper.radius
     property alias imgHeight: imgWrapper.implicitHeight
@@ -21,6 +22,16 @@ Item {
 
     readonly property bool isVideo: Images.isVideoFile(root.source)
     readonly property string displayPath: Wallpapers.displayPathFor(root.source)
+    readonly property bool inView: {
+        if (!flickable)
+            return true;
+
+        const contentY = flickable.contentY;
+        const viewportHeight = flickable.height;
+        const itemY = root.mapToItem(flickable.contentItem, 0, 0).y + 0 * (root.y + (root.parent?.y ?? 0));
+        const itemHeight = root.height;
+        return itemY + itemHeight >= contentY - viewportHeight && itemY <= contentY + 2 * viewportHeight;
+    }
 
     signal clicked
 
@@ -44,7 +55,7 @@ Item {
             Loader {
                 anchors.centerIn: parent
 
-                opacity: img.status === Image.Ready || img.status === Image.Error ? 0 : 1
+                opacity: img.status === Image.Loading ? 1 : 0
                 active: opacity > 0
 
                 sourceComponent: StyledRect {
@@ -81,7 +92,7 @@ Item {
                 id: img
 
                 anchors.fill: parent
-                path: root.displayPath
+                path: root.inView && imgWrapper.width > 0 && imgWrapper.height > 0 ? root.displayPath : ""
                 retainWhileLoading: true
                 opacity: status === Image.Ready ? 1 : 0
 

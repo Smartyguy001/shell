@@ -119,14 +119,15 @@ void CachingImageResponse::process() {
         }
     }
 
-    // Schedule cache job (this call will return the original image, but later ones will use cache)
-    ImageCacher::instance()->schedule(path, cachePath, size, m_fillMode);
-
-    m_image = QImage(path);
+    m_image = ImageCacher::render(path, size, m_fillMode);
     if (m_image.isNull()) {
         m_error = u"Failed to decode source: "_s + path;
         qCWarning(lcCProv).noquote() << m_error;
+        return;
     }
+
+    if (!cachePath.isEmpty())
+        ImageCacher::store(m_image, cachePath);
 }
 
 } // namespace
