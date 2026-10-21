@@ -1,6 +1,7 @@
 # branch upstream_pr ported_head_sha note
 personal/sync-tooling - - sync script + patches.list
 personal/parallax - - workspace parallax (on upstream WallpaperImpl)
+personal/video-wallpaper-dir - - separate video wallpaper dir (paths.videoWallpaperDir, default ~/Videos/Wallpapers)
 patches/2053-lock-reacquire 2053 95b098110046a68d54e44f678f46200718b2c849 lock reacquire after crash
 patches/2021-notifs-clear-batch 2021 7c36468da506880835f0cf0678d5abd6b5637849 batch notification clearing
 patches/1995-netusage-per-iface 1995 b4168f06f231eef963c9c69480b448239e003734 network usage per interface
