@@ -165,6 +165,7 @@ or by manually copying or symlinking your image to the path.
 
 The wallpapers for the wallpaper switcher are read from `~/Pictures/Wallpapers`
 by default. To change it, modify `paths.wallpaperDir` in `~/.config/caelestia/shell.json`.
+Video wallpapers are additionally read from `~/Videos/Wallpapers` (`paths.videoWallpaperDir`).
 
 To set the wallpaper, you can type `>wallpaper` in the launcher to open the wallpaper switcher.
 Alternatively, you can also use `caelestia wallpaper -f <path_to_wallpaper>` to set the wallpaper directly.
@@ -235,7 +236,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
 > - `lock`: `enableFprint`, `enableHowdy`, `maxFprintTries`, `maxHowdyTries`, `triggerHowdyOnWake`
 > - `nexus`: `networkRescanInterval`
 > - `notifs`: `actionOnClick`, `defaultExpireTimeout`, `expire`, `fullscreen`, `fullscreenExpireTimeout`
-> - `paths`: `lyricsDir`, `wallpaperDir`
+> - `paths`: `lyricsDir`, `videoWallpaperDir`, `wallpaperDir`
 > - `services`: `audioIncrement`, `brightnessIncrement`, `clockFormat`, `dataUnits`, `defaultPlayer`, `gpuType`, `lyricsBackend`, `maxVolume`, `playerAliases`, `sensorUnits`, `smartScheme`, `visualiserBars`, `weatherLocation`, `weatherUnits`
 > - `utilities`: `toasts.*`, `vpn.*`
 >
@@ -940,6 +941,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
     },
     "paths": {
         "wallpaperDir": "~/Pictures/Wallpapers",
+        "videoWallpaperDir": "~/Videos/Wallpapers",
         "lyricsDir": "~/Music/lyrics/",
         "sessionGif": "root:/assets/kurukuru.gif",
         "mediaGif": "root:/assets/bongocat.gif",

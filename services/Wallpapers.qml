@@ -22,8 +22,19 @@ Searcher {
     property bool previewColourLock
     property bool pendingPreviewClear
 
+    function baseDirFor(w: FileSystemEntry): string {
+        const videoDir = Paths.videowallsdir;
+        if (videoDir && (w.parentDir === videoDir || w.parentDir.startsWith(`${videoDir}/`)))
+            return videoDir;
+        return Paths.wallsdir;
+    }
+
+    function isTopLevel(w: FileSystemEntry): bool {
+        return w.parentDir === baseDirFor(w);
+    }
+
     function getCategoryFor(w: FileSystemEntry): string {
-        let category = w.parentDir.slice(Paths.wallsdir.length + 1);
+        let category = w.parentDir.slice(baseDirFor(w).length + 1);
         if (category.includes("/"))
             category = category.slice(0, category.indexOf("/"));
         return category;
@@ -59,7 +70,7 @@ Searcher {
             Colours.showPreview = false;
     }
 
-    list: wallpapers.entries
+    list: [...wallpapers.entries, ...videoWallpapers.entries]
     key: "relativePath"
     useFuzzy: GlobalConfig.launcher.useFuzzy.wallpapers
     extraOpts: useFuzzy ? ({}) : ({
@@ -109,6 +120,14 @@ Searcher {
         recursive: true
         path: Paths.wallsdir
         filter: FileSystemModel.Images | FileSystemModel.Videos
+    }
+
+    FileSystemModel {
+        id: videoWallpapers
+
+        recursive: true
+        path: Paths.videowallsdir
+        filter: FileSystemModel.Videos
     }
 
     Process {
