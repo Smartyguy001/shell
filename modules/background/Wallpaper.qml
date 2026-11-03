@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Quickshell
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
@@ -12,7 +13,14 @@ import qs.utils
 Item {
     id: root
 
+    required property ShellScreen screen
+
     property bool completed
+    readonly property real parallaxProgress: {
+        const ws = Hypr.monitorFor(screen)?.activeWorkspace?.id ?? 1;
+        const n = Math.max(2, Config.background.parallax.workspaces);
+        return ((ws - 1) % n) / (n - 1);
+    }
 
     Component.onCompleted: completed = true
 
@@ -85,6 +93,12 @@ Item {
     WallpaperImpl {
         id: impl
 
-        anchors.fill: parent
+        width: root.width * (1 + (Config.background.parallax.enabled ? Config.background.parallax.amount : 0))
+        height: root.height
+        x: -(width - root.width) * root.parallaxProgress
+
+        Behavior on x {
+            Anim {}
+        }
     }
 }
