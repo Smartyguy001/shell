@@ -18,6 +18,7 @@ class UtilitiesToasts : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, configLoaded, true)
     CONFIG_PROPERTY(bool, chargingChanged, true)
     CONFIG_PROPERTY(bool, gameModeChanged, true)
+    CONFIG_PROPERTY(bool, nightLightChanged, true)
     CONFIG_PROPERTY(bool, dndChanged, true)
     CONFIG_PROPERTY(bool, audioOutputChanged, true)
     CONFIG_PROPERTY(bool, audioInputChanged, true)
@@ -47,6 +48,12 @@ class UtilitiesVpn : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_LIST(UtilitiesVpnProviderList, provider, {})
     CONFIG_PROPERTY(QString, selectedProvider, {})
+};
+
+class UtilitiesNightLight : public settings::ObjectNode {
+    CONFIG_NODE(UtilitiesNightLight, settings::ObjectNode)
+
+    CONFIG_PROPERTY(int, temperature, 4000)
 };
 
 class UtilitiesCards : public settings::ObjectNode {
@@ -82,6 +89,7 @@ class UtilitiesConfig : public settings::ObjectNode {
     CONFIG_GLOBAL_SUBOBJECT(UtilitiesToasts, toasts)
     CONFIG_GLOBAL_SUBOBJECT(UtilitiesVpn, vpn)
     CONFIG_GLOBAL_SUBOBJECT(UtilitiesGameMode, gameMode)
+    CONFIG_GLOBAL_SUBOBJECT(UtilitiesNightLight, nightLight)
     CONFIG_LIST(EntryList, quickToggles,
         DEFAULT_ARG({
             LIST_ENTRY(wifi, true),
@@ -91,6 +99,7 @@ class UtilitiesConfig : public settings::ObjectNode {
             LIST_ENTRY(gameMode, true),
             LIST_ENTRY(wallpaperPlaying, true),
             LIST_ENTRY(dnd, true),
+            LIST_ENTRY(nightLight, true),
             LIST_ENTRY(vpn, false),
         }))
 };
