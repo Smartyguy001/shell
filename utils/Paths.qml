@@ -30,6 +30,7 @@ Singleton {
         return dir === wallsdir || dir.startsWith(`${wallsdir}/`) ? "" : dir;
     }
     readonly property string recsdir: Quickshell.env("CAELESTIA_RECORDINGS_DIR") || `${videos}/Recordings`
+    readonly property string screenshotsdir: Quickshell.env("CAELESTIA_SCREENSHOTS_DIR") || `${pictures}/Screenshots`
     readonly property string libdir: Quickshell.env("CAELESTIA_LIB_DIR") || "/usr/lib/caelestia"
 
     function toLocalFile(path: url): string {
