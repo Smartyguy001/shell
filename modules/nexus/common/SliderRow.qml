@@ -15,6 +15,7 @@ ConnectedRect {
     property alias label: label.text
     property alias valueLabel: valueLabel.text
     property real value
+    property alias interactionOnMove: slider.interactionOnMove
 
     signal moved(value: real)
 
@@ -73,6 +74,8 @@ ConnectedRect {
                 implicitHeight: Tokens.padding.medium * 2
 
                 StyledSlider {
+                    id: slider
+
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
